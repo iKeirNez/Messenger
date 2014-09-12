@@ -10,7 +10,7 @@ Include Messenger in your project and instantiate it when your plugin loads:
 
 ```java
 public void onEnable() {
-    Messenger.load(new File(getDataFolder(), "language.properties"))
+    Messenger.load(new File(getDataFolder(), "language.properties"));
 }
 ```
 
