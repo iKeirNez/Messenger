@@ -38,21 +38,29 @@ public enum Messenger {
 
     // Below are some values you should probably modify
 
-    PREFIX("&7[&6MyPlugin&7] &f"),
+    PREFIX("&7[&6MyPlugin&7] &f", false), // prefixes shouldn't be prefixed :)
     EXAMPLE_SIMPLE("This is the default value"),
     EXAMPLE_FORMATTED("This is a string with some data in it: %s"),
-    EXAMPLE_COLOR("This is a string with some &ccolor in it");
+    EXAMPLE_COLOR("This is a string with some &ccolor in it"),
+    EXAMPLE_NO_PREFIX("This is a string which will not have a prefix attached to it", false);
 
     // Code after this point shouldn't need to be touched :)
 
     private static final String PREFIX_KEY = "PREFIX";
+    private static boolean hasPrefixCacheValue = true;
 
     private final String defaultValue;
     private String currentValue;
+    private boolean prefix;
 
     private Messenger(String defaultValue){
+        this(defaultValue, true);
+    }
+
+    private Messenger(String defaultValue, boolean prefix){
         this.defaultValue = defaultValue;
         this.currentValue = ChatColor.translateAlternateColorCodes('&', defaultValue);
+        this.prefix = prefix;
     }
 
     /**
@@ -65,46 +73,52 @@ public enum Messenger {
     }
 
     /**
+     * Will a prefix be attached to the message when retrieved?
+     *
+     * @return prefix prefix status of the message
+     */
+    public boolean isPrefix() {
+        return prefix;
+    }
+
+    /**
+     * Sets whether or not a prefix will be attached to retrieved messages.
+     *
+     * @param prefix new prefix boolean value
+     */
+    public void setPrefix(boolean prefix) {
+        this.prefix = prefix;
+    }
+
+    /**
      * Gets the current value contained in the language file with a prefix.
      *
      * @param args Arguments which should be used when formatting the value, see String#format(String, Object...)
      * @return The current value, formatted using the provided arguments
      */
-    public String getCurrentValue(Object... args) {
-        return getCurrentValue(true, args);
-    }
-
-    public String getCurrentValue(boolean prefix, Object... args){
+    public String getCurrentValue(Object... args){
         String message = String.format(currentValue, args);
 
-        if (prefix){
+        if (prefix && hasPrefixCacheValue && !name().equals(PREFIX_KEY)){ // prevents infinite loop
             try {
-                message = valueOf(PREFIX_KEY).getCurrentValue(false, new Object[0]) + message;
-            } catch (IllegalArgumentException ignored){} // if enum didn't exist, we simply won't prefix the message
+                message = valueOf(PREFIX_KEY).getCurrentValue() + message;
+            } catch (IllegalArgumentException ex){
+                // if enum didn't exist, we simply won't prefix the message and keep a cache of this value not existing, so we don't have too many exceptions being thrown.
+                hasPrefixCacheValue = false;
+            }
         }
 
         return message;
     }
 
     /**
-     * Sends a message to a player using the current value contained in the language file and using the prefix defined (if any).
+     * Sends a message to a commandSender using the current value contained in the language file.
      *
      * @param commandSender The CommandSender to send the formatted message to
      * @param args Arguments which should be used when formatting the value, see String#format(String, Object...)
      */
     public void send(CommandSender commandSender, Object... args){
-        send(commandSender, true, args);
-    }
-
-    /**
-     * Sends a message to a commandSender using the current value contained in the language file.
-     *
-     * @param commandSender The CommandSender to send the formatted message to
-     * @param prefix Should the message be prefixed with the prefix defined?
-     * @param args Arguments which should be used when formatting the value, see String#format(String, Object...)
-     */
-    public void send(CommandSender commandSender, boolean prefix, Object... args){
-        commandSender.sendMessage(getCurrentValue(prefix, args));
+        commandSender.sendMessage(getCurrentValue(args));
     }
 
     /**

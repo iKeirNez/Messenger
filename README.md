@@ -50,7 +50,7 @@ Formatting
 
 Messages can be sent with a prefix in front of them. You can change the prefix by changing the default value of PREFIX in Messenger.
 
-Or you can disable the prefix by removing it from the enum.
+You can disable a prefix for a message by setting the prefix boolean to false, see EXAMPLE_NO_PREFIX for an example, prefixes can be disabled altogether by removing the PREFIX enum key.
 
 All messages support the use of ```&``` to denote color codes, such as ```&e``` for yellow, where color codes can be found [here](http://ess.khhq.net/mc/).
 
