@@ -79,7 +79,7 @@ public enum Messenger {
 
         if (prefix){
             try {
-                message = valueOf(PREFIX_KEY).getCurrentValue() + message;
+                message = valueOf(PREFIX_KEY).getCurrentValue(false, new Object[0]) + message;
             } catch (IllegalArgumentException ignored){} // if enum didn't exist, we simply won't prefix the message
         }
 
