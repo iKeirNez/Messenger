@@ -144,12 +144,7 @@ public enum Messenger {
             return;
         }
 
-        Properties defaultProperties = new Properties();
-        for (Messenger messenger : values()){
-            defaultProperties.setProperty(getKey(messenger), messenger.getDefaultValue());
-        }
-
-        Properties properties = new Properties(defaultProperties);
+        Properties properties = new Properties();
         try {
             properties.load(new FileInputStream(languageFile));
         } catch (IOException e) {
@@ -158,7 +153,13 @@ public enum Messenger {
         }
 
         for (Messenger messenger : values()){
-            messenger.currentValue = ChatColor.translateAlternateColorCodes('&', properties.getProperty(getKey(messenger)));
+            String key = getKey(messenger);
+
+            if (properties.containsKey(key)){ // load from config
+                messenger.currentValue = ChatColor.translateAlternateColorCodes('&', properties.getProperty(key));
+            } else { // set default value
+                properties.setProperty(key, messenger.getDefaultValue());
+            }
         }
 
         try {
@@ -169,7 +170,7 @@ public enum Messenger {
     }
 
     private static String getKey(Messenger messenger){
-        return capitalise(messenger.name().replaceAll("_", " "));
+        return capitalise(messenger.name().replaceAll("_", " ")).replaceAll(" ", "");
     }
 
     private static String capitalise(String string){
