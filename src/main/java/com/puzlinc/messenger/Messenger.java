@@ -37,6 +37,7 @@ import java.util.Properties;
 public enum Messenger {
 
     // Below are some values you should probably modify
+
     PREFIX("&7[&6MyPlugin&7] &f"),
     EXAMPLE_SIMPLE("This is the default value"),
     EXAMPLE_FORMATTED("This is a string with some data in it: %s"),
