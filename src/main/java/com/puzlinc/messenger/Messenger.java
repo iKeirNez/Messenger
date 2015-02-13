@@ -170,7 +170,7 @@ public enum Messenger {
     }
 
     private static String getKey(Messenger messenger){
-        return capitalise(messenger.name().replaceAll("_", " ")).replaceAll(" ", "");
+        return capitalise(messenger.name().replace("_", " ")).replace(" ", "");
     }
 
     private static String capitalise(String string){
